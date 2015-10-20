@@ -96,7 +96,7 @@
            
             <!-- sidfot -->
             <div class="footer">
-                <p>Det här är en sidfot</p>
+                <asp:Label ID="Label1" runat="server" Text="Label"></asp:Label>
             </div>
         </div> </form>
     </body>
