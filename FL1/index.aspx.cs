@@ -14,10 +14,15 @@ namespace FL1
         protected void Page_Load(object sender, EventArgs e)
         {
 
-            //LaddaDjur(); 
+            LaddaDjur(); 
             //visaXML();
-            XML();
+            //XML();
         }
+        private void LaddaFilmer()
+        {
+
+        }
+
         private void LaddaDjur()
         {
             djur d = new djur();
@@ -37,8 +42,18 @@ namespace FL1
             mångadjur.Add(d2);
             mångadjur.Add(d3);
 
-            GridView1.DataSource = mångadjur;
-            GridView1.DataBind();
+            mångadjur.Add(d);
+            mångadjur.Add(d2);
+            mångadjur.Add(d3);
+
+            List<djur> färredjur = new List<djur>();
+            färredjur.Add(d);
+            färredjur.Add(d2);
+            Repeater1.DataSource = färredjur;
+            Repeater1.DataBind();
+
+            Repeater2.DataSource = mångadjur;
+            Repeater2.DataBind();
         }
 
         private void XML()

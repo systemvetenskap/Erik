@@ -40,59 +40,53 @@
             <!-- sektioner -->
             <div class="body">
                 <asp:GridView ID="GridView1" runat="server"></asp:GridView>  
-            <div class="sektioner clear">
+            
                 <!-- sektion ett -->
                 <asp:Repeater ID="Repeater1" runat="server">
                     <HeaderTemplate>
-
+                        <div class="sektioner clear">
                     </HeaderTemplate>
                     <ItemTemplate>
-
+                     
+                     <div class='<%# (Container.ItemIndex+1)%3==0 ? "sektion sektion-sista" : "sektion mobil" %>'>  
+                        <img src="bilder/1.jpg" alt="Hoppande lamm">
+                        <h2><%# Eval("Namn") %> </h2>
+                        <p><%# Eval("Text") %></p>
+                      
+                        <%# (Container.ItemIndex+1) % 3 ==0 ? "</div> <div class=\"sektioner clear\">":null%>
+                        
                     </ItemTemplate>
                     <FooterTemplate>
-
+                         </div><!--sektioner clear -->
                     </FooterTemplate>
 
                 </asp:Repeater>
-                <div class="sektion mobil">
-                    <img src="bilder/1.jpg" alt="Hoppande lamm">
-                    <h2>Sektion ett</h2>
-                    <p>Lorem ipsum dolor sit amet, epicuri appareat mei at, in postea posidonium est, sed dolor dicant accusata an. Dicit tincidunt sea id. Usu no oblique malorum, dolore voluptatibus at eum. Te pro oblique legimus albucius.</p>
-                </div>
-                <!-- sektion två -->
-                <div class="sektion sektion-andra mobil">
-                    <img src="bilder/2.jpg" alt="Kärlekskranka fåglar">
-                    <h2>Sektion två</h2>
-                    <p>Lorem ipsum dolor sit amet, epicuri appareat mei at, in postea posidonium est, sed dolor dicant accusata an. Dicit tincidunt sea id. Usu no oblique malorum, dolore voluptatibus at eum. Te pro oblique legimus albucius.</p>
-                </div>
-                <!-- sektion tre -->
-                <div class="sektion sektion-sista">
-                    <img src="bilder/3.jpg" alt="Söt hund">
-                    <h2>Sektion tre</h2>
-                    <p>Lorem ipsum dolor sit amet, epicuri appareat mei at, in postea posidonium est, sed dolor dicant accusata an. Dicit tincidunt sea id. Usu no oblique malorum, dolore voluptatibus at eum. Te pro oblique legimus albucius.</p>
-                </div>
-                <div class="sektion mobil">
-                    <img src="bilder/1.jpg" alt="Hoppande lamm">
-                    <h2>Sektion ett</h2>
-                    <p>Lorem ipsum dolor sit amet, epicuri appareat mei at, in postea posidonium est, sed dolor dicant accusata an. Dicit tincidunt sea id. Usu no oblique malorum, dolore voluptatibus at eum. Te pro oblique legimus albucius.</p>
-                </div>
-                <!-- sektion två -->
-                <div class="sektion sektion-andra mobil">
-                    <img src="bilder/2.jpg" alt="Kärlekskranka fåglar">
-                    <h2>Sektion två</h2>
-                    <p>Lorem ipsum dolor sit amet, epicuri appareat mei at, in postea posidonium est, sed dolor dicant accusata an. Dicit tincidunt sea id. Usu no oblique malorum, dolore voluptatibus at eum. Te pro oblique legimus albucius.</p>
-                </div>
-                <!-- sektion tre -->
-                <div class="sektion sektion-sista">
-                    <img src="bilder/3.jpg" alt="Söt hund">
-                    <h2>Sektion tre</h2>
-                    <p>Lorem ipsum dolor sit amet, epicuri appareat mei at, in postea posidonium est, sed dolor dicant accusata an. Dicit tincidunt sea id. Usu no oblique malorum, dolore voluptatibus at eum. Te pro oblique legimus albucius.</p>
-                </div>
-            </div><!--sektioner clear-->
+
+                <asp:Repeater ID="Repeater2" runat="server">
+                    <HeaderTemplate>
+                        <div class="sektioner clear">
+                    </HeaderTemplate>
+                    <ItemTemplate>
+                     
+                     <div class='<%# (Container.ItemIndex+1)%3==0 ? "sektion sektion-sista" : "sektion mobil" %>'>  
+                        <img src="bilder/1.jpg" alt="Hoppande lamm">
+                        <h2><%# Eval("Namn") %> </h2>
+                        <p><%# Eval("Text") %></p>
+                      </div>
+                        <%# (Container.ItemIndex+1) % 3 ==0 ? "</div> <div class=\"sektioner clear\">":null%>
+                        
+                    </ItemTemplate>
+                    <FooterTemplate>
+                         </div><!--sektioner clear -->
+                    </FooterTemplate>
+
+                </asp:Repeater>
+                
+           
 
               
 
-          </div>
+     
            
             <!-- sidfot -->
             <div class="footer">
