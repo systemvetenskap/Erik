@@ -6,22 +6,278 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Xml;
+using System.Web.Configuration;
+using Npgsql;
 
 namespace FL1
 {
     public partial class index : System.Web.UI.Page
     {
+        private const int AntalFilmerPerSida = 9;
+        private const int AntalSidorPager = 10;
+
+        
         protected void Page_Load(object sender, EventArgs e)
         {
-
-            LaddaDjur(); 
-            //visaXML();
-            //XML();
+            divError.Visible = false;
+            if (!IsPostBack)
+            {
+                Int64 AntalTräffar = LaddaFilmer(1,1);
+                FyllSidor(1);
+            }
+            
+           
         }
-        private void LaddaFilmer()
+
+        protected void pager_Click(object sender, EventArgs e)
         {
+           
+            string ValdSida = (sender as LinkButton).CommandArgument;
+            int start, AktuellSida = Math.Abs(int.Parse(ValdSida));
+            
+            if (ValdSida[0]=='+')
+            {
+                AktuellSida++;
+                
+            }
+            else if (ValdSida[0] == '-')
+            {
+                AktuellSida -= AntalSidorPager-1;
+               
+
+                if (AktuellSida < 0)
+                {
+                    AktuellSida = 1;
+                    
+                }
+            }
+            else
+            {
+                AktuellSida = int.Parse(ValdSida);
+            }
+           
+
+            start = (AktuellSida * AntalFilmerPerSida) - (AntalFilmerPerSida-1);
+
+            Int64 AntalTräffar = LaddaFilmer(AktuellSida, start);
+            FyllSidor(AktuellSida);
+            
 
         }
+
+        //private void FyllSidor3(int aktuellSida)
+        //{
+        //    int AntalPoster = 22;
+        //    int AntalSidor = AntalPoster / AntalFilmerPerSida;
+            
+        //    List<ListItem> sidor = new List<ListItem>();
+        //    for (int i = 1; i <= AntalSidor; i++)
+        //    {
+        //        ListItem item = new ListItem();
+        //        item.Text = i.ToString();
+        //        item.Value = i.ToString();
+        //        item.Selected = i == aktuellSida;
+
+        //        sidor.Add(item);
+        //    }
+           
+        //    Repeater2.DataSource = sidor;
+        //    Repeater2.DataBind();
+        //}
+
+
+
+
+
+
+
+        private  void FyllSidor(int aktuellSida)
+        {
+            Int64 AntalPoster = LaddaFilmer(1, 1);
+            int start, MaxAntalSidor;
+              
+
+            int AntalSidor = (int)Math.Ceiling((decimal)AntalPoster / (decimal)AntalFilmerPerSida);
+           
+            List<ListItem> sidor = new List<ListItem>();
+
+            /* Kontrollera sidspann
+             * 
+             * Hämtar antalet sidor som ska visas på den valda sidan.
+             * Om AktuellSida = 2, kommer sidspannet att vara 11-20
+             * Då sätts variabeln start till 11 och MaxAntalSidor till 20
+             * 
+             */
+            int j=0;
+            do
+            {
+                j++;
+                MaxAntalSidor = j * AntalSidorPager;
+                start = MaxAntalSidor - (AntalSidorPager - 1);
+                
+            }
+            while (aktuellSida > MaxAntalSidor);
+
+
+
+
+            //Om det är fler sidträffar än man vill visa i pagern
+            if (AntalSidor > AntalSidorPager)
+            {
+                //Om man har bläddrat fram i pagern vill man även visa en tillbakapil
+                if (start != 1)
+                {
+                    ListItem item = new ListItem();
+                    item.Text = "&laquo;";
+                    item.Value = "-" + (start - 1).ToString();
+                    item.Selected = false;
+                    sidor.Add(item);
+                }
+            }
+
+            // Om antalet sidor inte fyller pagern måste sista sidan begränsas
+            if (MaxAntalSidor>AntalSidor)
+            {
+                MaxAntalSidor = AntalSidor;
+
+            }
+          
+               
+               
+           //Fyller pagern från start till slut
+            for (int i = start; i <= MaxAntalSidor; i++)
+            {
+                ListItem item = new ListItem();
+                item.Text = i.ToString();
+                item.Value = i.ToString();
+                item.Selected = i == aktuellSida;
+               
+                sidor.Add(item);
+            }
+
+            //Om det finns fler sidor än som visas ska en framåtpil laddas
+            //Det betyder att sista sidan inte får en framåtpil
+            if (MaxAntalSidor!=AntalSidor)
+            {
+               
+                ListItem item = new ListItem();
+                item.Text = "&raquo;";
+
+                item.Value = "+" + MaxAntalSidor;
+                item.Selected = false;
+                sidor.Add(item);
+            }
+
+            Repeater2.DataSource = sidor;
+            Repeater2.DataBind();
+        }
+
+        //private void LaddaFilmer(int aktuellsida)
+        //{
+        //    string connectionString = WebConfigurationManager.ConnectionStrings["pagila"].ConnectionString;
+        //    NpgsqlConnection conn = new NpgsqlConnection(connectionString);
+        //    try
+        //    {
+        //        string sql = "select title,description from film order by title offset :AktuellSida limit :AntalFilmer";
+               
+                   
+        //        NpgsqlCommand cmd = new NpgsqlCommand(sql, conn);
+        //        cmd.Parameters.AddWithValue("AntalFilmer", AntalFilmerPerSida);
+        //        cmd.Parameters.AddWithValue("AktuellSida", aktuellsida);
+        //        conn.Open();
+        //        NpgsqlDataReader reader = cmd.ExecuteReader();
+        //        Repeater1.DataSource = reader;
+        //        Repeater1.DataBind();
+
+        //        FyllSidor(aktuellsida);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Response.Write(e.Message);
+        //    }
+        //    finally
+        //    {
+        //        conn.Close();
+        //    }
+        //}
+
+        private Int64 LaddaFilmer(int aktuellsida, int start)
+        {
+            string connectionString = WebConfigurationManager.ConnectionStrings["pagila"].ConnectionString;
+            Int64 antal;
+            try
+            {
+                using (NpgsqlConnection conn = new NpgsqlConnection(connectionString))
+                {
+                    conn.Open();
+                    string sql = "select count(*) from film";
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, conn))
+                    {
+                        object AntalPoster = cmd.ExecuteScalar();
+                        antal = (Int64)(AntalPoster);
+
+                    }
+
+                    sql = "select title,description from film order by title offset :Start limit :AntalFilmer";
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("AntalFilmer", AntalFilmerPerSida);
+                        cmd.Parameters.AddWithValue("Start", start);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            Repeater1.DataSource = reader;
+                            Repeater1.DataBind();
+                            //FyllSidor(aktuellsida);
+                        }
+                    }
+
+                }
+                return antal;
+            }
+            catch (Exception e)
+            {
+                divError.Visible = true;
+                lblError.Text= e.Message;
+                return 0;
+            }
+            
+            //NpgsqlConnection conn = new NpgsqlConnection(connectionString);
+            //try
+            //{
+            //    string sql = "select count(*) from film";
+            //    NpgsqlCommand cmd = new NpgsqlCommand(sql, conn);
+            //    conn.Open();
+            //    object AntalPoster = cmd.ExecuteScalar();
+            //    Int64 antal = (Int64)(AntalPoster);
+
+               
+            //    sql="select title,description from film order by title offset :Start limit :AntalFilmer";
+
+            //    cmd = new NpgsqlCommand(sql, conn);
+            //    cmd.Parameters.AddWithValue("AntalFilmer", AntalFilmerPerSida);
+            //    cmd.Parameters.AddWithValue("Start", start);
+            //    NpgsqlDataReader reader = cmd.ExecuteReader();
+            //    Repeater1.DataSource = reader;
+            //    Repeater1.DataBind();
+                
+            //    FyllSidor(aktuellsida);
+            //    return antal;
+            //}
+            //catch (Exception e)
+            //{
+            //    Response.Write(e.Message);
+            //    return 0;
+            //}
+            //finally
+            //{
+            //    conn.Close();
+            //}
+            
+           
+        }
+
 
         private void LaddaDjur()
         {
@@ -46,14 +302,11 @@ namespace FL1
             mångadjur.Add(d2);
             mångadjur.Add(d3);
 
-            List<djur> färredjur = new List<djur>();
-            färredjur.Add(d);
-            färredjur.Add(d2);
-            Repeater1.DataSource = färredjur;
+            
+            Repeater1.DataSource = mångadjur;
             Repeater1.DataBind();
 
-            Repeater2.DataSource = mångadjur;
-            Repeater2.DataBind();
+           
         }
 
         private void XML()
@@ -81,11 +334,17 @@ namespace FL1
             //}
 
             //Hämta noder utifrån namn
-            XmlNodeList musikinstrument = doc.SelectNodes("/musikinstrument/instrument[namn='kontrabas']");
+            //XmlNodeList musikinstrument = doc.SelectNodes("/musikinstrument/instrument[namn='kontrabas']");
+
+       
+
+            XmlNodeList musikinstrument = doc.SelectNodes("/musikinstrument/instrument/namn[@nr='1']");
+            //XmlAttribute nr = musikinstrument.Attributes["id"];
 
             foreach (XmlNode nod in musikinstrument)
             {
-                Label1.Text += nod["namn"].InnerText + " ";
+                //Label1.Text = nod.Attributes["nr"].Value;
+                Label1.Text += nod.ParentNode["namn"].InnerText;
             }
 
         }

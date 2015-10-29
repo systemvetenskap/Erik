@@ -10,7 +10,8 @@
 
         <!-- länk till stilmall -->
         <link rel="stylesheet" href="stilmall.css">
-        
+        <link href="Content/bootstrap-theme.css" rel="stylesheet" />
+        <link href="Content/bootstrap.css" rel="stylesheet" />
         <!-- den responsiva stilmallen laddas in när webbläsarens fönster är mindre än 900 pixlar -->
         <link rel="stylesheet" href="responsiv.css" media="screen and (max-width: 900px)">
 
@@ -37,6 +38,9 @@
                     <li><a href="#">Kontaktuppgfter</a></li>                                                                                                
                 </ul>
             </div>
+            <div runat="server" id="divError" class="alert alert-danger">
+                 <asp:Label ID="lblError" runat="server"></asp:Label>
+            </div>
             <!-- sektioner -->
             <div class="body">
                 <asp:GridView ID="GridView1" runat="server"></asp:GridView>  
@@ -50,10 +54,10 @@
                      
                      <div class='<%# (Container.ItemIndex+1)%3==0 ? "sektion sektion-sista" : "sektion mobil" %>'>  
                         <img src="bilder/1.jpg" alt="Hoppande lamm">
-                        <h2><%# Eval("Namn") %> </h2>
-                        <p><%# Eval("Text") %></p>
+                        <h2><%# Eval("title") %> </h2>
+                        <p><%# Eval("description") %></p>
                       
-                        <%# (Container.ItemIndex+1) % 3 ==0 ? "</div> <div class=\"sektioner clear\">":null%>
+                        <%# (Container.ItemIndex+1) % 3 ==0 ? "</div></div> <div class=\"sektioner clear\">":"</div>"%>
                         
                     </ItemTemplate>
                     <FooterTemplate>
@@ -61,26 +65,25 @@
                     </FooterTemplate>
 
                 </asp:Repeater>
-
                 <asp:Repeater ID="Repeater2" runat="server">
                     <HeaderTemplate>
-                        <div class="sektioner clear">
+                        <ul class="pagination">
                     </HeaderTemplate>
                     <ItemTemplate>
-                     
-                     <div class='<%# (Container.ItemIndex+1)%3==0 ? "sektion sektion-sista" : "sektion mobil" %>'>  
-                        <img src="bilder/1.jpg" alt="Hoppande lamm">
-                        <h2><%# Eval("Namn") %> </h2>
-                        <p><%# Eval("Text") %></p>
-                      </div>
-                        <%# (Container.ItemIndex+1) % 3 ==0 ? "</div> <div class=\"sektioner clear\">":null%>
-                        
-                    </ItemTemplate>
+                      <li class='<%# Convert.ToBoolean(Eval("Selected")) ? "active" : "passive" %>'>
+                        <asp:LinkButton ID="pager" runat="server" CommandArgument= <%# Eval("Value")%> OnClick="pager_Click">
+                            <%# Eval("Text") %>
+                         
+                        </asp:LinkButton>
+                            </li>
+                    </ItemTemplate>  
+                    
                     <FooterTemplate>
-                         </div><!--sektioner clear -->
+                        </ul>  
                     </FooterTemplate>
+                    </asp:Repeater>
 
-                </asp:Repeater>
+                
                 
            
 
@@ -92,7 +95,8 @@
             <div class="footer">
                 <asp:Label ID="Label1" runat="server" Text="Label"></asp:Label>
             </div>
-        </div> </form>
+        </div> 
+            </div></form>
     </body>
 </html>
 
