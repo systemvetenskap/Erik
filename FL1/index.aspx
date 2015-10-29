@@ -41,6 +41,10 @@
             <div runat="server" id="divError" class="alert alert-danger">
                  <asp:Label ID="lblError" runat="server"></asp:Label>
             </div>
+            <div runat="server" id="divInfo" class="alert  alert-info">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                 <asp:Label ID="lblInfo" runat="server"></asp:Label>
+            </div>
             <!-- sektioner -->
             <div class="body">
                 <asp:GridView ID="GridView1" runat="server"></asp:GridView>  
@@ -71,7 +75,7 @@
                     </HeaderTemplate>
                     <ItemTemplate>
                       <li class='<%# Convert.ToBoolean(Eval("Selected")) ? "active" : "passive" %>'>
-                        <asp:LinkButton ID="pager" runat="server" CommandArgument= <%# Eval("Value")%> OnClick="pager_Click">
+                        <asp:LinkButton ID="pager" runat="server" CommandArgument= <%# Eval("Value")%> OnClick="pager_Click" >
                             <%# Eval("Text") %>
                          
                         </asp:LinkButton>
@@ -97,6 +101,8 @@
             </div>
         </div> 
             </div></form>
+        <script src="Scripts/jquery-1.9.1.min.js"></script>
+        <script src="Scripts/bootstrap.min.js"></script>
     </body>
 </html>
 
