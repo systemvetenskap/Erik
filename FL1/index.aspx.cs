@@ -22,10 +22,16 @@ namespace FL1
         {
             divError.Visible = false;
             divInfo.Visible = false;
+            int AktuellSida = 1;
+            if (!string.IsNullOrWhiteSpace(Request.QueryString["sida"]))
+            {
+                AktuellSida = int.Parse(Request.QueryString["sida"]);
+                //FyllSidor(int.Parse(Request.QueryString["sida"]));
+            }
+
             if (!IsPostBack)
             {
-               
-                FyllSidor(1);
+                FyllSidor(AktuellSida);
             }
             
            
@@ -57,9 +63,7 @@ namespace FL1
             {
                 AktuellSida = int.Parse(ValdSida);
             }
-           
-            
-                       
+                    
             FyllSidor(AktuellSida);
             
 
@@ -84,7 +88,9 @@ namespace FL1
                  * Hämtar antalet sidor som ska visas på den valda sidan.
                  * Om AktuellSida = 2, kommer sidspannet att vara 11-20
                  * Då sätts variabeln start till 11 och MaxAntalSidor till 20
-                 * 
+                 *
+                 * Vill dock inte att sidpagern ska förskjutas så att den alltid börjar med 
+                 * aktuell sida.
                  */
                 int j = 0;
                 do
@@ -96,7 +102,7 @@ namespace FL1
                 }
                 while (aktuellSida > MaxAntalSidor);
 
-
+                
 
 
                 //Om det är fler sidträffar än man vill visa i pagern
@@ -219,8 +225,6 @@ namespace FL1
             {
                 divError.Visible = true;
                 lblError.Text = e.Message;
-               
-                
             }
 
             
