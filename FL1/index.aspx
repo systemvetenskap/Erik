@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="index.aspx.cs" Inherits="FL1.index" %>
+﻿ <%@ Page Language="C#" AutoEventWireup="true" CodeBehind="index.aspx.cs" Inherits="FL1.index" %>
 
 
 <!DOCTYPE html>
@@ -75,7 +75,11 @@
                     </HeaderTemplate>
                     <ItemTemplate>
                       <li class='<%# Convert.ToBoolean(Eval("Selected")) ? "active" : "passive" %>'>
-                        <asp:LinkButton ID="pager" runat="server" CommandArgument= <%# Eval("Value")%> OnClick="pager_Click" PostBackUrl='<%# string.Format("~/index.aspx?sida={0}", Eval("Value")) %>' >
+                        <asp:LinkButton ID="pager" 
+                            runat="server" 
+                            CommandArgument= <%# Eval("Value")%> 
+                            OnClick="pager_Click" 
+                            PostBackUrl='<%# string.Format("~/index.aspx?sida={0}", Eval("Value")) %>' >
                             <%# Eval("Text") %>
                          
                         </asp:LinkButton>

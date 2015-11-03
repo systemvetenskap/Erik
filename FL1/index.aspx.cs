@@ -25,8 +25,7 @@ namespace FL1
             int AktuellSida = 1;
             if (!string.IsNullOrWhiteSpace(Request.QueryString["sida"]))
             {
-                AktuellSida = int.Parse(Request.QueryString["sida"]);
-                //FyllSidor(int.Parse(Request.QueryString["sida"]));
+                int.TryParse(Request.QueryString["sida"],out AktuellSida);
             }
 
             if (!IsPostBack)
@@ -151,8 +150,8 @@ namespace FL1
                     item.Selected = false;
                     sidor.Add(item);
                 }
-
-               LaddaFilmer(aktuellSida, start);
+               start = (aktuellSida*AntalFilmerPerSida)-(AntalFilmerPerSida-1);
+               LaddaFilmer(start);
                
 
                 Repeater2.DataSource = sidor;
@@ -175,7 +174,7 @@ namespace FL1
                 using (NpgsqlConnection conn = new NpgsqlConnection(connectionString))
                 {
                     conn.Open();
-                    string sql = "select count(*) from film";// where film_id=1234";
+                    string sql = "select count(*) from film"; //where film_id=1234";
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, conn))
                     {
@@ -195,7 +194,7 @@ namespace FL1
             }
 
         }
-        private void LaddaFilmer(int aktuellsida, int start)
+        private void LaddaFilmer(int start)
         {
             string connectionString = WebConfigurationManager.ConnectionStrings["pagila"].ConnectionString;
             
